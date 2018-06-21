@@ -10,7 +10,6 @@ import numpy as np
 
 
 DEFAULT_VALUE = -9999.
-SAMPLE_RATE = 10
 
 dir_output = '/home/lxh12/AVEC2018_data'
 dir_root = '/home/lxh12/AVEC2018_CES'
@@ -32,7 +31,7 @@ def get_batch_from_video(video, batch_size, batch_idx, dim):
 
 
 @commandr.command('pack')
-def pack(input_dir, batch_size):
+def pack(input_dir, batch_size, sample_rate):
     batch_size = int(batch_size)
     input_dirname = os.path.join(dir_root, input_dir)
 
@@ -41,7 +40,7 @@ def pack(input_dir, batch_size):
     for key in FileManager.get_keys('train'):
         filename = os.path.join(input_dirname, '{}.csv'.format(key))
         partial_vec_list = list(CSVLoader.load(filename))
-        partial_vec_list = Sampler.sampling(partial_vec_list, SAMPLE_RATE)
+        partial_vec_list = Sampler.sampling(partial_vec_list, sample_rate)
         vec_list.extend(partial_vec_list)
 
     dim = len(vec_list[0])
@@ -54,7 +53,7 @@ def pack(input_dir, batch_size):
             filename_feat = os.path.join(input_dirname, '{}.csv'.format(key))
 
             vec_list = list(CSVLoader.load(filename_feat))
-            vec_list = Sampler.sampling(vec_list, SAMPLE_RATE)
+            vec_list = Sampler.sampling(vec_list, sample_rate)
             vec_list = scaler.transform(vec_list).tolist()  # dim: (MOVIE_LENGTH,FEATURE_DIM)
 
             if mode == 'Test':
