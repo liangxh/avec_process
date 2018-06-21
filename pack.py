@@ -41,7 +41,8 @@ def pack(input_dir, batch_size, sample_rate):
     for key in FileManager.get_keys('train'):
         filename = os.path.join(input_dirname, '{}.csv'.format(key))
         partial_vec_list = list(CSVLoader.load(filename))
-        partial_vec_list = Sampler.sampling(partial_vec_list, sample_rate)
+        if sample_rate > 1:
+            partial_vec_list = Sampler.sampling(partial_vec_list, sample_rate)
         vec_list.extend(partial_vec_list)
 
     dim = len(vec_list[0])
@@ -54,7 +55,8 @@ def pack(input_dir, batch_size, sample_rate):
             filename_feat = os.path.join(input_dirname, '{}.csv'.format(key))
 
             vec_list = list(CSVLoader.load(filename_feat))
-            vec_list = Sampler.sampling(vec_list, sample_rate)
+            if sample_rate > 1:
+                vec_list = Sampler.sampling(vec_list, sample_rate)
             vec_list = scaler.transform(vec_list).tolist()  # dim: (MOVIE_LENGTH,FEATURE_DIM)
 
             if mode == 'Test':
