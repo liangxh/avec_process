@@ -9,6 +9,7 @@ from sampling import Sampler
 
 
 DEFAULT_VALUE = -9999.
+SAMPLE_RATE = 10
 
 dir_output = '/home/lxh12/AVEC2018_data'
 dir_root = '/home/lxh12/AVEC2018_CES'
@@ -38,8 +39,8 @@ def pack(input_dirname, batch_size):
     vec_list = list()
     for key in FileManager.get_keys('train'):
         filename = os.path.join(input_dirname, '{}.csv'.format(key))
-        partial_vec_list = CSVLoader.load(filename)
-        partial_vec_list = Sampler.sampling(partial_vec_list, 5)
+        partial_vec_list = list(CSVLoader.load(filename))
+        partial_vec_list = Sampler.sampling(partial_vec_list, SAMPLE_RATE)
         vec_list.extend(partial_vec_list)
 
     dim = len(vec_list[0])
@@ -52,7 +53,7 @@ def pack(input_dirname, batch_size):
             filename_feat = os.path.join(input_dirname, '{}.csv'.format(key))
 
             vec_list = list(CSVLoader.load(filename_feat))
-            vec_list = Sampler.sampling(vec_list, 5)
+            vec_list = Sampler.sampling(vec_list, SAMPLE_RATE)
             vec_list = scaler.transform(vec_list).tolist()  # dim: (MOVIE_LENGTH,FEATURE_DIM)
 
             if mode == 'Test':
