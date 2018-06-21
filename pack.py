@@ -6,6 +6,7 @@ from csv_loader import CSVLoader
 import math
 from sklearn import preprocessing
 from sampling import Sampler
+import numpy as np
 
 
 DEFAULT_VALUE = -9999.
@@ -31,9 +32,9 @@ def get_batch_from_video(video, batch_size, batch_idx, dim):
 
 
 @commandr.command('pack')
-def pack(input_dirname, batch_size):
+def pack(input_dir, batch_size):
     batch_size = int(batch_size)
-    input_dirname = os.path.join(dir_root, input_dirname)
+    input_dirname = os.path.join(dir_root, input_dir)
 
     scaler = preprocessing.StandardScaler()
     vec_list = list()
@@ -71,8 +72,9 @@ def pack(input_dirname, batch_size):
             if len(vec_list) > max_video_len:
                 max_video_len = len(vec_list)
 
-            video = list(zip(vec_list, label_list))
-            video_list.append(video)
+            video_list.append((vec_list, label_list))
+
+        # GROUP-1
 
         n_batch = int(math.ceil(max_video_len / batch_size))
 
@@ -88,11 +90,30 @@ def pack(input_dirname, batch_size):
             label_batch_list.append(label_batch)
             seq_batch_list.append(seq_batch)
 
-        dirname = os.path.join(dir_output, input_dirname + '-1')
+        dirname = os.path.join(dir_output, input_dir + '-1')
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         output_filename = os.path.join(dirname, '{}_{}.npz'.format(mode, lang))
         np.savez(output_filename, x=vec_batch_list, y=label_batch_list, seq_len=seq_batch_list)
+
+        # GROUP-2
+
+        vec_list, label_list, seq_list = list(), list(), list()
+        for video in video_list:
+            vec_list, label_list = video
+            video_len = len(vec_list)
+            n_clip = int(math.ceil(video_len / batch_size))
+            for i in range(n_clip):
+                partial_vec_list, partial_label_list, seq_len = get_batch_from_video(video, batch_size, i, dim)
+                vec_list.append(partial_vec_list)
+                label_list.append(partial_label_list)
+                seq_list.append(seq_len)
+
+        dirname = os.path.join(dir_output, input_dir + '-2')
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+        output_filename = os.path.join(dirname, '{}_{}.npz'.format(mode, lang))
+        np.savez(output_filename, x=vec_list, y=label_list, seq_len=seq_list)
 
 
 if __name__ == '__main__':
