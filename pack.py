@@ -34,7 +34,7 @@ def pack(input_dirname, output_filename):
         for key in FileManager.get_keys(mode, lang):
             filename_feat = os.path.join(input_dirname, '{}.csv'.format(key))
 
-            partial_vec_list = CSVLoader.load(filename_feat)
+            partial_vec_list = list(CSVLoader.load(filename_feat))
             partial_vec_list = Sampler.sampling(partial_vec_list, 5)
             #partial_vec_list = scaler.transform(partial_vec_list).tolist()
             vec_list.extend(partial_vec_list)
