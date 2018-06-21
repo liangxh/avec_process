@@ -63,13 +63,14 @@ def pack(input_dir, batch_size, sample_rate):
                 label_list = [[DEFAULT_VALUE] * 3] * len(vec_list)
             else:
                 filename_label = os.path.join(dir_labels, '{}.csv'.format(key))
-                label_list = list(CSVLoader.load(filename_label))[:-1]
+                label_list = list(CSVLoader.load(filename_label))
 
-            if len(vec_list) - 1 == len(label_list):
-                vec_list = vec_list[:-1]
-
-            if len(label_list) != len(vec_list):
-                raise Exception('fail {}'.format(key))
+            if len(vec_list) + 1 == len(label_list):
+                vec_list = [[0.] * dim] + vec_list
+            elif len(vec_list) - 1 == len(label_list):
+                vec_list = vec_list[1:]
+            elif len(label_list) != len(vec_list):
+                raise Exception('fail {}: {} != {}'.format(key, len(label_list), len(vec_list)))
 
             if len(vec_list) > max_video_len:
                 max_video_len = len(vec_list)
