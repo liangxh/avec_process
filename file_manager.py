@@ -31,5 +31,5 @@ class FileManager(object):
         else:
             raise ValueError('{}_{} not found'.format(mode, lang))
 
-        filenames = ['{}_{}_{:2d}'.format(mode, lang, i) for i in range(1, n + 1)]
+        filenames = ['{}_{}_{:02d}'.format(mode, lang, i) for i in range(1, n + 1)]
         return filenames

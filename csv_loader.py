@@ -25,5 +25,5 @@ class CSVLoader(object):
                     parts = line.split(';', 2)
                     line = parts[-1]
 
-                vec = map(float, line.split(';'))
+                vec = list(map(float, line.split(';')))
                 yield vec
