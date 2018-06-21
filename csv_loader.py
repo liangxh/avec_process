@@ -23,15 +23,15 @@ class CSVLoader(object):
                 if line == '':
                     continue
 
-                if has_header:
-                    if seperator is None:
-                        if line.find(';') >= 0:
-                            seperator = ';'
-                        elif line.find(',') >= 0:
-                            seperator = ','
-                        else:
-                            raise Exception('unknown seperator for {}'.format(filename))
+                if seperator is None:
+                    if line.find(';') >= 0:
+                        seperator = ';'
+                    elif line.find(',') >= 0:
+                        seperator = ','
+                    else:
+                        raise Exception('unknown seperator for {}'.format(filename))
 
+                if has_header:
                     parts = line.split(seperator, 2)
                     line = parts[-1]
 
