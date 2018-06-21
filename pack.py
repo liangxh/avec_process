@@ -33,6 +33,7 @@ def get_batch_from_video(video, batch_size, batch_idx, dim):
 @commandr.command('pack')
 def pack(input_dir, batch_size, sample_rate):
     batch_size = int(batch_size)
+    sample_rate = int(sample_rate)
     input_dirname = os.path.join(dir_root, input_dir)
 
     scaler = preprocessing.StandardScaler()
