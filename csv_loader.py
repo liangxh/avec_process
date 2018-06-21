@@ -4,6 +4,8 @@
 class CSVLoader(object):
     @classmethod
     def load(cls, filename):
+        seperator = None
+
         with open(filename, 'r') as file_obj:
             first_line = file_obj.readline()
 
@@ -22,8 +24,16 @@ class CSVLoader(object):
                     continue
 
                 if has_header:
-                    parts = line.split(';', 2)
+                    if seperator is None:
+                        if line.find(';') >= 0:
+                            seperator = ';'
+                        elif line.find(',') >= 0:
+                            seperator = ','
+                        else:
+                            raise Exception('unknown seperator for {}'.format(filename))
+
+                    parts = line.split(seperator, 2)
                     line = parts[-1]
 
-                vec = list(map(float, line.split(';')))
+                vec = list(map(float, line.split(seperator)))
                 yield vec
