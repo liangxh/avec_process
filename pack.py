@@ -36,7 +36,7 @@ def pack(input_dirname, output_filename):
 
             partial_vec_list = CSVLoader.load(filename_feat)
             partial_vec_list = Sampler.sampling(partial_vec_list, 5)
-            partial_vec_list = scaler.transform(partial_vec_list).tolist()
+            #partial_vec_list = scaler.transform(partial_vec_list).tolist()
             vec_list.extend(partial_vec_list)
 
             if mode == 'Test':
@@ -44,6 +44,9 @@ def pack(input_dirname, output_filename):
             else:
                 filename_label = os.path.join(dir_labels, '{}.csv'.format(key))
                 label_list = list(CSVLoader.load(filename_label))
+
+            if len(label_list) != len(partial_vec_list):
+                raise Exception('fail {}'.format(key))
 
 
 if __name__ == '__main__':
