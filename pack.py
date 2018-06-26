@@ -103,8 +103,8 @@ def pack(input_dir, batch_size, sample_rate):
 
         vec_list, label_list, seq_list = list(), list(), list()
         for video in video_list:
-            vec_list, label_list = video
-            video_len = len(vec_list)
+            _vec_list, _label_list = video
+            video_len = len(_vec_list)
             n_clip = int(math.ceil(video_len / batch_size))
             for i in range(n_clip):
                 partial_vec_list, partial_label_list, seq_len = get_batch_from_video(video, batch_size, i, dim)
