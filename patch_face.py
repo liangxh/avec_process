@@ -21,6 +21,7 @@ def filename_face(key, idx):
 def main():
     for mode, lang in FileManager.mode_lang:
         for key in FileManager.get_keys(mode, lang):
+            print(key)
             ref_n = get_ref_n(key)
             f_exists = {idx: os.path.exists(filename_face(key, idx)) for idx in range(1, ref_n + 1)}
 
