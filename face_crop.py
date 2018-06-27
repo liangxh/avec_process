@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import commandr
 import os
+import time
 from PIL import Image
 from file_manager import FileManager
 
@@ -26,22 +28,27 @@ class FaceLocLoader(object):
 
 
 @commandr.command('crop')
-def crop(input_dir='/home/lxh12/face_loc', out_dir='/home/lxh/face_frames'):
+def crop(mode, lang, input_dir='/home/lxh12/face_loc', out_dir='/home/lxh12/face_frames'):
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
 
     loader = FaceLocLoader(dir_name=input_dir)
 
-    for mode, lang in FileManager.mode_lang:
-        for key in FileManager.get_keys(mode, lang):
-            sub_out_dir = os.path.join(out_dir, key)
-            if not os.path.exists(sub_out_dir):
-                os.mkdir(sub_out_dir)
+    for key in FileManager.get_keys(mode, lang):
+        print(key, end='')
+        st = time.time()
 
-            items = list(loader.load(key))
-            for img_filename, idx, loc in items:
-                out_file = os.path.join(sub_out_dir, '{}.png'.format(idx))
-                Image.open(img_filename).crop(loc).reshape([100, 100]).save(out_file)
+        sub_out_dir = os.path.join(out_dir, key)
+        if not os.path.exists(sub_out_dir):
+            os.mkdir(sub_out_dir)
+
+        items = list(loader.load(key))
+        for img_filename, idx, loc in items:
+            out_file = os.path.join(sub_out_dir, '{}.png'.format(idx))
+            Image.open(img_filename).crop(loc).resize([100, 100]).save(out_file)
+
+        et = time.time()
+        print('{} sec'.format(et - st))
 
 
 if __name__ == '__main__':
