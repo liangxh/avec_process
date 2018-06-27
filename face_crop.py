@@ -44,11 +44,18 @@ def crop(mode, lang, input_dir='/home/lxh12/face_loc', out_dir='/home/lxh12/face
 
         items = list(loader.load(key))
         for img_filename, idx, loc in items:
+            a, b, c, d = loc
+            if a > c:
+                a, c = c, a
+            if b > d:
+                b, d = d, b
+            loc = [b, a, d, c]
+
             out_file = os.path.join(sub_out_dir, '{}.png'.format(idx))
             Image.open(img_filename).crop(loc).resize([100, 100]).save(out_file)
 
         et = time.time()
-        print('{} sec'.format(et - st))
+        print(' - {} sec'.format(et - st))
 
 
 if __name__ == '__main__':

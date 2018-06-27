@@ -7,6 +7,7 @@ import math
 from sklearn import preprocessing
 from sampling import Sampler
 import numpy as np
+from sklearn.decomposition import PCA
 
 
 DEFAULT_VALUE = -9999.
@@ -31,12 +32,12 @@ def get_batch_from_video(video, batch_size, batch_idx, dim):
 
 
 @commandr.command('pack')
-def pack(input_dir, batch_size, sample_rate):
+def pack(input_dir, batch_size, sample_rate, pca_dim=0):
+    pca_dim = int(pca_dim)
     batch_size = int(batch_size)
     sample_rate = int(sample_rate)
     input_dirname = os.path.join(dir_root, input_dir)
 
-    scaler = preprocessing.StandardScaler()
     vec_list = list()
     for key in FileManager.get_keys('train'):
         filename = os.path.join(input_dirname, '{}.csv'.format(key))
@@ -46,6 +47,12 @@ def pack(input_dir, batch_size, sample_rate):
         vec_list.extend(partial_vec_list)
 
     dim = len(vec_list[0])
+    pca = None
+    if pca_dim > 0:
+        pca = PCA(n_components=pca_dim)
+        vec_list = pca.fit_transform(vec_list)
+
+    scaler = preprocessing.StandardScaler()
     scaler.fit(vec_list)
 
     for mode, lang in FileManager.mode_lang:
@@ -57,6 +64,10 @@ def pack(input_dir, batch_size, sample_rate):
             vec_list = list(CSVLoader.load(filename_feat))
             if sample_rate > 1:
                 vec_list = Sampler.sampling(vec_list, sample_rate)
+
+            if pca_dim > 0:
+                vec_list = pca.transform(vec_list)
+
             vec_list = scaler.transform(vec_list).tolist()  # dim: (MOVIE_LENGTH,FEATURE_DIM)
 
             if mode == 'Test':
