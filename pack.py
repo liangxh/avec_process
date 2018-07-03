@@ -48,9 +48,12 @@ def pack(input_dir, batch_size, sample_rate, pca_dim=0):
 
     dim = len(vec_list[0])
     pca = None
+    pca_suffix = ''
     if pca_dim > 0:
         pca = PCA(n_components=pca_dim)
         vec_list = pca.fit_transform(vec_list)
+        dim = pca_dim
+        pca_suffix = '_{}'.format(pca_dim)
 
     scaler = preprocessing.StandardScaler()
     scaler.fit(vec_list)
@@ -104,7 +107,7 @@ def pack(input_dir, batch_size, sample_rate, pca_dim=0):
             label_batch_list.append(label_batch)
             seq_batch_list.append(seq_batch)
 
-        dirname = os.path.join(dir_output, input_dir + '-1')
+        dirname = os.path.join(dir_output, input_dir + pca_suffix + '-1')
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         output_filename = os.path.join(dirname, '{}_{}.npz'.format(mode, lang))
@@ -123,7 +126,7 @@ def pack(input_dir, batch_size, sample_rate, pca_dim=0):
                 label_list.append(partial_label_list)
                 seq_list.append(seq_len)
 
-        dirname = os.path.join(dir_output, input_dir + '-2')
+        dirname = os.path.join(dir_output, input_dir + pca_suffix + '-2')
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         output_filename = os.path.join(dirname, '{}_{}.npz'.format(mode, lang))
