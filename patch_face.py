@@ -5,7 +5,7 @@ import shutil
 from file_manager import FileManager
 
 
-d_face_frames = '/home/lxh12/face_frames'
+d_face_frames = '/home/lxh12/face_frames_ori'
 
 
 def get_ref_n(key):
@@ -15,7 +15,7 @@ def get_ref_n(key):
 
 
 def filename_face(key, idx):
-    return '/home/lxh12/face_frames/{}/{}.png'.format(key, idx)
+    return '{}/{}/{}.png'.format(d_face_frames, key, idx)
 
 
 def main():
