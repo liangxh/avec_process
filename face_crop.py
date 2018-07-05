@@ -28,7 +28,7 @@ class FaceLocLoader(object):
 
 
 @commandr.command('crop')
-def crop(mode, lang, input_dir='/home/lxh12/face_loc', out_dir='/home/lxh12/face_frames'):
+def crop(mode, lang, input_dir='/home/lxh12/face_loc', out_dir='/home/lxh12/face_frames_ori'):
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
 
@@ -49,8 +49,23 @@ def crop(mode, lang, input_dir='/home/lxh12/face_loc', out_dir='/home/lxh12/face
                 a, c = c, a
             if b > d:
                 b, d = d, b
-            loc = [b, a, d, c]
 
+            width = c - a + 1
+            height = d - b + 1
+            if width > height:
+                d = int(float(width) / 2 + float(d + b) / 2)
+                b = d - width + 1
+                if b < 0:
+                    d -= b
+                    b = 0
+            elif height > width:
+                c = int(float(height) / 2 + float(a + c) / 2)
+                a = c - height + 1
+                if a < 0:
+                    c -= a
+                    a = 0
+
+            loc = [b, a, d, c]
             out_file = os.path.join(sub_out_dir, '{}.png'.format(idx))
             Image.open(img_filename).crop(loc).resize([100, 100]).save(out_file)
 
